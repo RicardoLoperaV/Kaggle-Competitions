@@ -27,4 +27,11 @@ Y_train = train_df['SalePrice']
 #print(X_numerical.head(5))
 print(X_categorical.head(5))
 
+model = DecisionTreeRegressor()
+model.fit(X_numerical, Y_train)
+
+
+
+
+
 
