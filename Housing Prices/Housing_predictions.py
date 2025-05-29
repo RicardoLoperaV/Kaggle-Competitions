@@ -6,7 +6,6 @@ import os
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.metrics import mean_squared_error
 
-# Get the directory of the current script
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
 #Cargamos el train y test 
