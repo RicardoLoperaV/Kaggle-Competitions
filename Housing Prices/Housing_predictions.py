@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import os
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.metrics import mean_squared_error
+from sklearn.impute import SimpleImputer
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -25,6 +26,11 @@ cols_categoricas = train_df.select_dtypes(include=['object']).columns
 X_numerical = train_df[cols_numericas]
 X_categorical = train_df[cols_categoricas]
 
+#dentro de las columnas numericas, hay valores nulos
+# Por lo cual los reemplazamos con la media
+imputer = SimpleImputer(strategy='mean')
+X_numerical = imputer.fit_transform(X_numerical)
+
 Y_train = train_df['SalePrice']
 
 print("\nNumerical features shape:", X_numerical.shape)
@@ -38,7 +44,10 @@ model.fit(X_numerical, Y_train)
 #Con el .fit entrenamos el modelo
 
 #hacemos predicciones
-predic = model.predict(test_df[cols_numericas])
+#primero eliminamos las columnas categoricas y reemplazamos los valores nulos.
+test_df = test_df[cols_numericas]
+test_df = imputer.transform(test_df)
+predic = model.predict(test_df)
 
 #una vez entrenado el modelo y las predicciones hechas, podemos evaluar el modelo
 #usamos el error cuadratico medio para evaluar el modelo
