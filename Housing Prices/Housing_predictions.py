@@ -63,7 +63,7 @@ print("Categorical features shape:", X_categorical.shape)
 #usamos un arbol de decision para predecir
 #ponemos un random state para que el modelo sea reproducible
 #Con el .fit entrenamos el modelo
-model = DecisionTreeRegressor(random_state=1, criterion='friedman_mse', splitter='random', max_depth=10)
+model = DecisionTreeRegressor(random_state=1, max_depth=10)
 model.fit(X_train, Y_train)
 
 # Evaluación en conjunto de entrenamiento
