@@ -33,6 +33,18 @@ pipeline_categoricas = Pipeline([('imputer', SimpleImputer(strategy='most_freque
                                  ('onehot', OneHotEncoder(sparse_output=False, handle_unknown='ignore'))])
 
 #tratamos las columnas numericas y categoricas del train
-pipeline_numericas.fit_transform(train_df_numericas)
-pipeline_categoricas.fit_transform(train_df_categoricas)
+X_numericas = pipeline_numericas.fit_transform(train_df_numericas)
+X_categoricas = pipeline_categoricas.fit_transform(train_df_categoricas)
+
+#hacemos feature engineering para las columnas numericas
+X_numericas['TotalSF'] = X_numericas['TotalBsmtSF'] + X_numericas['1stFlrSF'] + X_numericas['2ndFlrSF']
+X_numericas['TotalBath'] = X_numericas['FullBath'] + 0.5 * X_numericas['HalfBath']
+X_numericas['TotalPorch'] = X_numericas['OpenPorchSF'] + X_numericas['EnclosedPorch'] + X_numericas['3SsnPorch'] + X_numericas['ScreenPorch']
+X_numericas['Age'] = X_numericas['YrSold'] - X_numericas['YearBuilt']  
+
+#Ahora, combinamos las columnas numericas y categoricas del train
+X_Combined = np.concatenate([X_numericas, X_categoricas], axis=1)
+
+
+
 
