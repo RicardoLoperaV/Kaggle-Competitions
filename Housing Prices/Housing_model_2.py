@@ -52,7 +52,7 @@ Y_train_val_final = Y_train.copy()
 X_train, X_val, Y_train, Y_val = train_test_split(X_Combined, Y_train, test_size=0.2, random_state=1)
 
 #Entrenamos el modelo
-model = RandomForestRegressor(n_estimators=100, max_depth=10, min_samples_split=5, min_samples_leaf=4, random_state=1, n_jobs=-1)
+model = RandomForestRegressor(n_estimators=200, max_depth=10, min_samples_split=5, min_samples_leaf=4, random_state=1, n_jobs=-1)
 model.fit(X_train, Y_train)
 
 #Evaluamos el modelo en el conjunto de entrenamiento
@@ -101,7 +101,7 @@ print(f"Media: {cv_scores.mean():.2f} (+/- {cv_scores.std() * 2:.2f})")
 print(f"Scores individuales: {cv_scores}")
 
 
-
+#Resultados finales (Kaggle): 16953.51963
 
 
 
