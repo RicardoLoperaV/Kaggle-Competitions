@@ -58,12 +58,12 @@ model_regressor = XGBRegressor(random_state=42)
 
 #Definimos los parametros a buscar
 parametros = {
-    'n_estimators': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000],
-    'learning_rate': [0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1],
-    'max_depth': [3, 4, 5, 6, 7, 8, 9, 10],
-    'min_child_weight': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    'subsample': [0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
-    'colsample_bytree': [0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+    'n_estimators': [100, 500,900],
+    'learning_rate': [0.01, 0.05, 0.08],
+    'max_depth': [3, 7,10],
+    'min_child_weight': [1, 2, 5],
+    'subsample': [0.5, 0.8, 0.9],
+    'colsample_bytree': [0.5, 0.8, 0.9]
 }
 
 #Aplicamos GridSearchCV
@@ -82,6 +82,9 @@ mejores_parametros = grid_search.best_params_
 print(f"Mejores parametros: {mejores_parametros}")
 #Veamos el mejor score de acuerdo a RMSE
 print(f"Mejor score de acuerdo a RMSE: {-grid_search.best_score_}")
+
+#Ahora, seleccionamos el mejor modelo
+model_regressor = XGBRegressor(**mejores_parametros, random_state=42)
 
 #Evaluamos el modelo en el conjunto de entrenamiento
 train_predictions = model_regressor.predict(X_train)
