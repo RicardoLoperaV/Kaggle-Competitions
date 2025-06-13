@@ -8,9 +8,7 @@ from sklearn.impute import SimpleImputer
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import cross_val_score
 from sklearn.pipeline import Pipeline
-from sklearn.model_selection import GridSearchCV
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -93,4 +91,6 @@ X_Combined_test = np.concatenate([X_numericas_test, X_categoricas_test], axis=1)
 #predecimos el conjunto de test
 test_predictions = model_regressor.predict(X_Combined_test)
 
+
+# PUNTAJE:  0.13168 V2
 
