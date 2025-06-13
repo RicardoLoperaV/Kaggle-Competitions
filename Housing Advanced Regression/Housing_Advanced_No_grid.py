@@ -1,4 +1,3 @@
-# Primero importamos las bibliotecas necesarias
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -52,40 +51,18 @@ X_Combined = np.concatenate([X_numericas, X_categoricas], axis=1)
 #Procedemos a separar el train en train y validation
 X_train, X_val, Y_train, Y_val = train_test_split(X_Combined, Y_train, test_size=0.2, random_state=42)
 
+#Despues de realizar una busqueda de hiperparametros con GridSearchCV, hemos encontrado los mejores parametros
+# para el modelo XGBRegressor. Ahora, podemos proceder a entrenar el modelo
+# y evaluar su rendimiento en el conjunto de entrenamiento y validación.
+
+parametros = {'colsample_bytree': 0.5, 'learning_rate': 0.05, 'max_depth': 3, 'min_child_weight': 1, 'n_estimators': 900, 'subsample': 0.8}
+
 #Ahora, procedemos a entrenar el modelo y evaluarlo
 #sin embargo, antes, aplicamos un GridSearchCV para encontrar los mejores parametros (primera vez)
-model_regressor = XGBRegressor(random_state=42)
+model_regressor = XGBRegressor(**parametros, random_state=42)
 
-#Definimos los parametros a buscar
-parametros = {
-    'n_estimators': [100, 500,900],
-    'learning_rate': [0.01, 0.05, 0.08],
-    'max_depth': [3, 7,10],
-    'min_child_weight': [1, 2, 5],
-    'subsample': [0.5, 0.8, 0.9],
-    'colsample_bytree': [0.5, 0.8, 0.9]
-}
-
-#Aplicamos GridSearchCV
-grid_search = GridSearchCV(
-    estimator=model_regressor, 
-    param_grid=parametros, 
-    cv=5, 
-    scoring='neg_mean_squared_error',
-    n_jobs=-1,
-    verbose=2)
-
-grid_search.fit(X_train, Y_train)
-
-#Obtenemos los mejores parametros
-mejores_parametros = grid_search.best_params_
-print(f"Mejores parametros: {mejores_parametros}")
-#Veamos el mejor score de acuerdo a RMSE
-print(f"Mejor score de acuerdo a RMSE: {-grid_search.best_score_}")
-
-
-#Ahora, seleccionamos el mejor modelo
-model_regressor = XGBRegressor(**mejores_parametros, random_state=42)
+#Entrenamos el modelo
+model_regressor.fit(X_train, Y_train)
 
 #Evaluamos el modelo en el conjunto de entrenamiento
 train_predictions = model_regressor.predict(X_train)
@@ -98,6 +75,22 @@ val_rmse = np.sqrt(mean_squared_error(Y_val, val_predictions))
 print(f"RMSE en el conjunto de validacion: {val_rmse}")
 
 
+#Como el modelo ha sido entrenado, podemos proceder a realizar predicciones en el conjunto de test
+#primero separamos las columnas numericas y categoricas del test
+test_df_numericas = test_df.select_dtypes(include=['int64', 'float64'])
+#hacemos feature engineering en el test
+test_df_numericas['TotalSF'] = test_df_numericas['TotalBsmtSF'] + test_df_numericas['1stFlrSF'] + test_df_numericas['2ndFlrSF']
+test_df_numericas['TotalBath'] = test_df_numericas['FullBath'] + 0.5 * test_df_numericas['HalfBath']
+test_df_numericas['TotalPorch'] = test_df_numericas['OpenPorchSF'] + test_df_numericas['EnclosedPorch'] + test_df_numericas['3SsnPorch'] + test_df_numericas['ScreenPorch']
+test_df_numericas['Age'] = test_df_numericas['YrSold'] - test_df_numericas['YearBuilt']
 
+test_df_categoricas = test_df.select_dtypes(include=['object'])
+
+X_numericas_test = pipeline_numericas.transform(test_df_numericas)
+X_categoricas_test = pipeline_categoricas.transform(test_df_categoricas)
+X_Combined_test = np.concatenate([X_numericas_test, X_categoricas_test], axis=1)
+
+#predecimos el conjunto de test
+test_predictions = model_regressor.predict(X_Combined_test)
 
 
